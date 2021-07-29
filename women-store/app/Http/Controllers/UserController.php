@@ -15,18 +15,20 @@ class UserController extends Controller
     private $user;
     public function __construct(User $user){
         $this->user = $user;
-        // $this->middleware("auth");
+        $this->middleware("auth");
     }
 
     public function index(){
-        $users =$this->user::all();
+        $users = $this->user::all();
         $roles = Role::all();
         return view('admin.user.list',['users'=>$users,'roles'=>$roles]);
+        // return view('admin.user.list');
     }
 
     public function create(){
         $roles = Role::all();
         return view('admin.user.create',compact('roles'));
+        // return view('admin.user.create');
     }
 
     public function store(Request $request){
@@ -37,14 +39,14 @@ class UserController extends Controller
         $user->role_id = $request->role;
         $user->password = Hash::make($request->password);
         $user->save();
-        // $user->roles()->attach($request->role);
+        $user->roles()->attach($request->role);
         return redirect()->route('user.list')->with('success','Thêm mới thành công.');
     }
 
     public function edit($id){
         $user = $this->user::findOrFail($id);
         $roles = Role::all();
-        // $userOfRole = DB::table('role_user')->where('user_id', $id)->pluck('role_id');
+        $userOfRole = DB::table('role_user')->where('user_id', $id)->pluck('role_id');
         return view('home.user.edit',compact('user','roles'));
     }
 
@@ -57,7 +59,7 @@ class UserController extends Controller
 
         $user->save();
 
-        // $user->roles()->attach($request->role);
+        $user->roles()->attach($request->role);
          return redirect()->route('user.list')->with('info','Cập nhật thành công.');
     }
 
@@ -68,10 +70,10 @@ class UserController extends Controller
         return redirect()->route('user.list')->with('danger','Xóa thành công.');
     }
 
-    // public function view($id){
-    //     $user = User::find($id);
+    public function view($id){
+        $user = User::find($id);
 
-    // }
+    }
 
     public function profile(){
         $user =Auth::user();
@@ -79,12 +81,13 @@ class UserController extends Controller
     }
 
     public function editProfile(Request $request){
-        // $this->validate($request,[
-        //     'name'=>'required',
-        //     'phone'=>'required',
-        //     'email'=>'required|email|unique:user,email,'.$user->id
-        // ]);
-        // $user->update($request->all());
+        $user = Auth::user();
+        $this->validate($request,[
+            'name'=>'required',
+            'phone'=>'required',
+            'email'=>'required|email|unique:user,email,'.$user->id
+        ]);
+        $user->update($request->all());
 
         return redirect()->back()->with('info','Chỉnh sửa thành công.');
     }

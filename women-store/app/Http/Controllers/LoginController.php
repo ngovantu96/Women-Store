@@ -15,9 +15,10 @@ class LoginController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->phone = $request->phone;
+
         $user->password = Hash::make($request->password);
         $user->save();
-        return view('home.login');
+        return view('admin.login');
     }
     public function login(Request $request){
         $user = [
@@ -27,7 +28,7 @@ class LoginController extends Controller
          if (!Auth::attempt($user)) {
              return redirect()->route('login')->with('error','tài khoản đăng nhập hoặc mật khẩu sai');
          } else {
-             return redirect()->route('admin.dashboard');
+             return view('admin.index');
          }
 
     }

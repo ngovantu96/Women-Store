@@ -19,30 +19,26 @@ use App\Http\Middleware\Auth;
 |
 */
 
-// Route::middleware('check_login')->get('/home', function () {
-//     return view('home.index');
-// });
-// Auth::routes();
-Route::get('/',function(){
-    return view('admin.index');
-});
-
 Route::get('/login', function () {
-    return view('home.login');
+    return view('admin.login');
 })->name('login');
 
-Route::get('/registrates', function () {
-    return view('home.registrates');
-});
+// Route::get('/register', function () {
+//     return view('admin.register');
+// });
 
-Route::post('/registrates',[LoginController::class,'regis'])->name('regis');
+// Route::get('/user', function () {
+//     return view('admin.user.list');
+// });
+
+// Route::post('/register',[LoginController::class,'regis'])->name('regis');
 Route::post('/login',[LoginController::class,'login'])->name('admin.login');
 
 
-Route::middleware('check_login')->prefix('home')->group(function(){
-Route::get('/logout',[LoginController::class,'logout'])->name('admin.logout');
 
-    Route::get('/',[HomeController::class,'index'])->name('admin.dashboard');
+Route::middleware('check_login')->prefix('admin')->group(function(){
+        Route::get('/',[HomeController::class,'index'])->name('dashboard');
+        Route::get('/logout',[LoginController::class,'logout'])->name('logout');
 
     //user
     Route::prefix('user')->group(function () {
